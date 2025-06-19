@@ -1,8 +1,15 @@
 const express = require('express');
-const { createStripePayment } = require('../controllers/paymentController');
-const { authMiddleware } = require('../middlewares/authMiddleware');
 const router = express.Router();
+const { 
+  createPaymentIntent,
+  handlePaymentSuccess
+} = require('../controllers/paymentController');
+const { authMiddleware } = require('../middlewares/authMiddleware');
 
-router.post('/stripe', authMiddleware, createStripePayment);
+// Create payment intent (protected route)
+router.post('/create-payment-intent', authMiddleware, createPaymentIntent);
+
+// Handle payment success (protected route)
+router.post('/payment-success', authMiddleware, handlePaymentSuccess);
 
 module.exports = router;

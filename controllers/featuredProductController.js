@@ -1,13 +1,9 @@
-const FeaturedProduct = require('../models/FeaturedProduct');
 const Product = require('../models/Product');
 
 // Get featured products
 exports.getFeaturedProducts = async (req, res) => {
   try {
-    const featuredProducts = await FeaturedProduct.find()
-      .populate('product', 'name price description image category countInStock')
-      .limit(4);
-
+    const featuredProducts = await Product.find({ isFeatured: true });
     res.json(featuredProducts);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -18,29 +14,13 @@ exports.getFeaturedProducts = async (req, res) => {
 exports.addFeaturedProduct = async (req, res) => {
   try {
     const { productId } = req.body;
-
-    // Check if product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-
-    // Check if already featured
-    const existing = await FeaturedProduct.findOne({ product: productId });
-    if (existing) {
-      return res.status(400).json({ message: 'Product is already featured' });
-    }
-
-    // Check if we already have 4 featured products
-    const count = await FeaturedProduct.countDocuments();
-    if (count >= 4) {
-      return res.status(400).json({ message: 'Maximum 4 featured products allowed' });
-    }
-
-    const featuredProduct = await FeaturedProduct.create({ product: productId });
-    await featuredProduct.populate('product', 'name price description image category countInStock');
-
-    res.status(201).json(featuredProduct);
+    product.isFeatured = true;
+    await product.save();
+    res.status(200).json({ message: 'Product marked as featured', product });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -50,13 +30,13 @@ exports.addFeaturedProduct = async (req, res) => {
 exports.removeFeaturedProduct = async (req, res) => {
   try {
     const { productId } = req.params;
-    
-    const featuredProduct = await FeaturedProduct.findOneAndDelete({ product: productId });
-    if (!featuredProduct) {
-      return res.status(404).json({ message: 'Featured product not found' });
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
     }
-
-    res.json({ message: 'Product removed from featured' });
+    product.isFeatured = false;
+    await product.save();
+    res.json({ message: 'Product removed from featured', product });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -65,9 +45,8 @@ exports.removeFeaturedProduct = async (req, res) => {
 // Get all featured products (Admin only)
 exports.getAllFeaturedProducts = async (req, res) => {
   try {
-    const featuredProducts = await FeaturedProduct.find()
-      .populate('product', 'name price image description category')
-      .sort({ position: 1 });
+    const featuredProducts = await Product.find({ isFeatured: true })
+      .sort({ createdAt: -1 });
 
     res.json(featuredProducts);
   } catch (error) {

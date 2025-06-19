@@ -16,7 +16,11 @@ const productSchema = new mongoose.Schema({
     }
   ],
   averageRating: { type: Number, default: 0 },
-  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  isFeatured: {
+    type: Boolean,
+    default: false
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);
