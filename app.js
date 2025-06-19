@@ -38,6 +38,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/email-verification', emailVerificationRoutes);
 app.use('/api/featured', featuredProductRoutes);
+
+
 const uri = process.env.MONGO_URI;
 
 mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })

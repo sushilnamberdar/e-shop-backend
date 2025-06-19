@@ -1,12 +1,11 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+console.log('Stripe Secret:', process.env.STRIPE_SECRET);
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const Order = require('../models/Order');
 
 // Create payment intent
 exports.createPaymentIntent = async (req, res) => {
   try {
-    console.log('Creating payment intent...');
-    console.log('request in payment',req);
-    console.log('Stripe key exists:', !!process.env.STRIPE_SECRET_KEY);
+  
     
     const { orderId } = req.body;
     console.log('Order ID:', orderId);
