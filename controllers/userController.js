@@ -33,9 +33,10 @@ exports.getAddresses = async (req, res) => {
 };
 
 exports.addAddress = async (req, res) => {
-  const { street, city, state, zip, country } = req.body;
+  const { street, city, state, zip, country, number, firstName, lastName } = req.body;
+  console.log("request received to add address", req.body);
   const user = await User.findById(req.user._id);
-  user.addresses.push({ street, city, state, zip, country });
+  user.addresses.push({ street, city, state, zip, country, number, firstName, lastName });
   await user.save();
   res.json({ addresses: user.addresses });
 };
@@ -43,12 +44,45 @@ exports.addAddress = async (req, res) => {
 exports.deleteAddress = async (req, res) => {
   const { addressId } = req.params;
   const user = await User.findById(req.user._id);
-  
+
   // Filter out the address with the matching ID
   user.addresses = user.addresses.filter(
     address => address._id.toString() !== addressId
   );
-  
+
   await user.save();
   res.json({ addresses: user.addresses });
+};
+
+
+exports.updateAddress = async (req, res) => {
+  console.log("request received to update address");
+  try {
+    const userId = req.user._id;
+    const { addressId, street, city, state, zip, country, number, firstName, lastName } = req.body.addressId;
+
+    if (!addressId) return res.status(400).json({ message: 'Address ID is required' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const address = user.addresses.id(addressId);
+    if (!address) return res.status(404).json({ message: 'Address not found' });
+
+    if (firstName) address.firstName = firstName;
+    if (lastName) address.lastName = lastName;
+    if (street) address.street = street;
+    if (city) address.city = city;
+    if (state) address.state = state;
+    if (zip) address.zip = zip;
+    if (number) address.number = number;
+    if (country) address.country = country;
+
+    await user.save();
+
+    res.json({ message: 'Address updated', addresses: user.addresses });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 };

@@ -9,11 +9,14 @@ const userSchema = new mongoose.Schema({
   verificationToken: { type: String },
   addresses: [
     {
+      firstName: String,
+      lastName: String,
       street: String,
       city: String,
       state: String,
       zip: String,
-      country: String
+      country: String,
+      number: Number,
     }
   ],
   phone: { type: String },
