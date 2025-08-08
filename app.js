@@ -13,6 +13,24 @@ const emailVerificationRoutes = require('./routes/emailVerificationRoutes');
 const featuredProductRoutes = require('./routes/featuredProductRoutes');
 const config = require('./config');
 const cookieParser = require('cookie-parser');
+const { handleWebhook } = require('./controllers/paymentController');
+
+// Raw body parser for Stripe webhooks
+const rawBodyParser = (req, res, next) => {
+  if (req.originalUrl === '/api/payments/webhook') {
+    let data = '';
+    req.setEncoding('utf8');
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      req.body = data;
+      next();
+    });
+  } else {
+    next();
+  }
+};
 
 const app = express();
 
@@ -25,7 +43,11 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(rawBodyParser);
 app.use(express.json());
+
+// Stripe webhook route - must be before other routes to use raw body
+app.post('/api/payments/webhook', handleWebhook);
 app.use(fileUpload());
 app.use('/uploads', express.static('uploads'));
 app.use(cookieParser());
