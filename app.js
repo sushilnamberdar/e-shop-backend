@@ -35,10 +35,10 @@ const rawBodyParser = (req, res, next) => {
 const app = express();
 
 
-
+const origin = process.env.FRONTEND_URL || 'http://localhost:3000';
 // CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000', // Your frontend URL
+  origin: origin, // Your frontend URL
   credentials: true, // Allow credentials (cookies)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
