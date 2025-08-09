@@ -7,9 +7,7 @@ const Cart = require('../models/Cart');
 exports.createOrder = async (req, res) => {
   try {
     const { items, shippingAddress, paymentMethod, totalAmount } = req.body;
-    console.log('items',items,'shippingAddress',shippingAddress,'paymentMethod',paymentMethod,'totalAmount',totalAmount);
-    // console.log("req.body in createOrder",req.body);c
-    
+
     // Validate items
     for (const item of items) {
       const product = await Product.findById(item.product);

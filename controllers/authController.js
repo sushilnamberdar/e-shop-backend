@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const config = require('../config');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const sendEmail = require('../utils/sendEmail');
 
 // Create a transporter for sending emails
 const transporter = nodemailer.createTransport({
@@ -24,7 +25,7 @@ console.log('Email Configuration:', {
 });
 
 // Verify transporter configuration
-transporter.verify(function(error, success) {
+transporter.verify(function (error, success) {
   if (error) {
     console.log('Transporter verification error:', error);
   } else {
@@ -40,10 +41,10 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    
-    const user = await User.create({ 
-      name, 
-      email, 
+
+    const user = await User.create({
+      name,
+      email,
       password: hashedPassword,
       verificationToken,
       verified: false
@@ -58,9 +59,38 @@ exports.register = async (req, res) => {
       to: email,
       subject: 'Verify Your Email',
       html: `
-        <h1>Email Verification</h1>
-        <p>Please click the link below to verify your email address:</p>
-        <a href="${verificationUrl}">Verify Email</a>
+     <div style="style="background: linear-gradient(to bottom right, #ecfdf5, #ffffff, #eff6ff); padding: 20px;"">
+    <div style="max-width: 600px; margin: auto;  border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      
+      <!-- Logo -->
+      <div>
+        <img src="${process.env.FRONTEND_URL}/static/media/logowithout%20name.fbdb73005c195970d570.png" alt="Shopinity" style="max-height: 60px;">
+                <img src="${process.env.FRONTEND_URL}//static/media/namelogo.8b0ff2397e57c7ce515e.png" alt="Shopinity" style="max-height: 60px;">
+
+      </div>
+
+      <!-- Main Content -->
+      <div style="padding: 30px; text-align: center;">
+        <h1 style="color: #333;">Thank You for Choosing Shopinity</h1>
+        <h2 style="color: #4F46E5;">Email Verification</h2>
+        <p style="font-size: 16px; color: #555;">
+          Please click the button below to verify your email address and activate your account.
+        </p>
+        <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; margin-top: 20px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">
+          Verify Email
+        </a>
+        <p style="margin-top: 20px; font-size: 14px; color: #888;">
+          If you didn’t create an account with Shopinity, you can safely ignore this email.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="text-align: center; padding: 15px; background-color: #f1f1f1; font-size: 12px; color: #999;">
+        © ${new Date().getFullYear()} Shopinity. All rights reserved.
+      </div>
+
+    </div>
+  </div>
       `
     };
 
@@ -74,16 +104,19 @@ exports.register = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '7d' });
     res.cookie('token', token, {
-      httpOnly: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
-    
-    res.json({ 
-      user: { 
-        id: user._id, 
-        name: user.name, 
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
         email: user.email,
-        verified: user.verified 
+        verified: user.verified
       },
       message: 'Registration successful. Please check your email to verify your account.'
     });
@@ -103,16 +136,19 @@ exports.login = async (req, res) => {
 
   const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '7d' });
   res.cookie('token', token, {
-    httpOnly: false,
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false,
+    maxAge: 7 * 24 * 60 * 60 * 1000
   });
-  res.json({ 
-    user: { 
-      id: user._id, 
-      name: user.name, 
+  res.json({
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
       email: user.email,
-      verified: user.verified 
-    } 
+      verified: user.verified
+    }
   });
 };
 

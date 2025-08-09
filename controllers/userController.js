@@ -36,7 +36,7 @@ exports.addAddress = async (req, res) => {
   const { street, city, state, zip, country, number, firstName, lastName } = req.body;
   console.log("request received to add address", req.body);
   const user = await User.findById(req.user._id);
-  user.addresses.push({ street, city, state, zip, country, number, firstName, lastName });
+  user.addresses.push({ street, city, state, zip, country, number, firstName, lastName,isDefault: true });
   await user.save();
   res.json({ addresses: user.addresses });
 };

@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
       zip: String,
       country: String,
       number: Number,
+      isDefault: { type: Boolean, default: true }
     }
   ],
   phone: { type: String },
