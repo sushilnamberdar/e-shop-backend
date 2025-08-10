@@ -64,6 +64,20 @@ app.use('/api/email-verification', emailVerificationRoutes);
 app.use('/api/featured', featuredProductRoutes);
 app.use('/api', searchRoutes);
 
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <title>My E-commerce API</title>
+      </head>
+      <body style="font-family: Arial; text-align: center; padding: 20px;">
+        <h1 style="color: teal;">Welcome to the E-commerce API</h1>
+        <p>This is the home page of our API server.</p>
+      </body>
+    </html>
+  `);
+});
+
 
 const uri = process.env.MONGO_URI;
 
