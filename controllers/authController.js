@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const config = require('../config');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
@@ -102,7 +101,7 @@ exports.register = async (req, res) => {
       // Continue with registration even if email fails
     }
 
-    const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.cookie('token', token, {
       httpOnly: true,
       sameSite: 'lax',
@@ -134,7 +133,7 @@ exports.login = async (req, res) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-  const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '7d' });
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.cookie('token', token, {
     httpOnly: true,
     sameSite: 'lax',
