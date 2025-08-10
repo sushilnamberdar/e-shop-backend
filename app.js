@@ -37,7 +37,7 @@ const app = express();
 const origin = process.env.FRONTEND_URL;
 // CORS configuration
 const corsOptions = {
-  origin:['http://localhost:3000', 'https://e-shop-orcin-phi.vercel.app'], // Your frontend URL
+  origin:[ 'https://e-shop-orcin-phi.vercel.app','http://localhost:3000'], // Your frontend URL
   credentials: true, // Allow credentials (cookies)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
