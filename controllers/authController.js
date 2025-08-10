@@ -127,6 +127,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+  const isProd = process.env.NODE_ENV === 'production';
   console.log('NODE_ENV:', process.env.NODE_ENV, 'isProd:', isProd);
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ message: 'Invalid credentials' });
