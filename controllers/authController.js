@@ -35,6 +35,7 @@ transporter.verify(function (error, success) {
   const isProd = process.env.NODE_ENV === 'production';
 
 exports.register = async (req, res) => {
+  const isProd = process.env.NODE_ENV === 'production';
   try {
     const { name, email, password } = req.body;
     const userExists = await User.findOne({ email });
@@ -128,6 +129,7 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  const isProd = process.env.NODE_ENV === 'production';
   const { email, password } = req.body;
   console.log('NODE_ENV:', process.env.NODE_ENV, 'isProd:', isProd);
   const user = await User.findOne({ email });
