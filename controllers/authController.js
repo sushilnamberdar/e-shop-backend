@@ -32,6 +32,8 @@ transporter.verify(function (error, success) {
   }
 });
 
+  const isProd = process.env.NODE_ENV === 'production';
+
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -104,7 +106,7 @@ exports.register = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.cookie('token', token, {
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: isProd ? 'none' : 'lax',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
@@ -127,7 +129,6 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-  const isProd = process.env.NODE_ENV === 'production';
   console.log('NODE_ENV:', process.env.NODE_ENV, 'isProd:', isProd);
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ message: 'Invalid credentials' });
@@ -138,7 +139,7 @@ exports.login = async (req, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.cookie('token', token, {
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    sameSite: isProd ? 'none' : 'lax',
     secure: process.env.NODE_ENV === 'production',
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
