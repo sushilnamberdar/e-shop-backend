@@ -34,7 +34,6 @@ const rawBodyParser = (req, res, next) => {
 
 const app = express();
 
-
 const origin = process.env.FRONTEND_URL;
 // CORS configuration
 const corsOptions = {
@@ -43,7 +42,7 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
-app.set('trust proxy', 1);
+
 app.use(cors(corsOptions));
 app.use(rawBodyParser);
 app.use(express.json());
