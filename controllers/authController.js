@@ -104,11 +104,16 @@ exports.register = async (req, res) => {
       // Continue with registration even if email fails
     }
 
+    const isProd = process.env.NODE_ENV === 'production';
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      secure: isProd,           // true on HTTPS (prod), false in HTTP dev
+      sameSite: isProd ? 'none' : 'lax', // 'none' required for cross-site in Chrome; needs secure:true
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/',                // optional but recommended
+      // domain: '.yourdomain.com' // only if you need it across subdomains in prod
     });
 
     res.json({
@@ -140,8 +145,11 @@ exports.login = async (req, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.cookie('token', token, {
     httpOnly: true,
-    secure: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000
+    secure: isProd,           // true on HTTPS (prod), false in HTTP dev
+    sameSite: isProd ? 'none' : 'lax', // 'none' required for cross-site in Chrome; needs secure:true
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',                // optional but recommended
+    // domain: '.yourdomain.com' // only if you need it across subdomains in prod
   });
   res.json({
     token,
