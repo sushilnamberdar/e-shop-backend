@@ -34,13 +34,21 @@ const rawBodyParser = (req, res, next) => {
 
 const app = express();
 
-const origin = process.env.FRONTEND_URL;
+const allowedOrigins = [
+  'https://e-shop-orcin-phi.vercel.app',
+  'http://localhost:3000',
+  // add other dev ports if needed, e.g. 'http://localhost:5173'
+];
 // CORS configuration
 const corsOptions = {
-  origin:[ 'https://e-shop-orcin-phi.vercel.app','http://localhost:3000'], // Your frontend URL
-  credentials: true, // Allow credentials (cookies)
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin(origin, cb) {
+    if (!origin) return cb(null, true); // allow non-browser tools
+    cb(null, allowedOrigins.includes(origin));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
