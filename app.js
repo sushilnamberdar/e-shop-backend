@@ -35,7 +35,7 @@ const rawBodyParser = (req, res, next) => {
 const app = express();
 
 const allowedOrigins = [
-  'https://e-shop-orcin-phi.vercel.app',
+  'https://shop.99flash.fun',
   'http://localhost:3000',
   // add other dev ports if needed, e.g. 'http://localhost:5173'
 ];
