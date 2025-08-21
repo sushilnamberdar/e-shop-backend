@@ -166,3 +166,12 @@ exports.resetPassword = async (req, res) => {
   // Implement password reset logic (email token, etc.)
   res.json({ message: 'Password reset not implemented in this sample.' });
 };
+
+exports.logout = async (req,res)=>{
+  res.clearCookie("token",{
+  httpOnly:true,
+  secure: true,
+  sameSite:"strict",  
+  });
+  return res.status(200).json({message:"Logged out successfully"});
+};
