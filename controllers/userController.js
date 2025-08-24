@@ -2,7 +2,12 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 
 exports.getUser = async (req, res) => {
-  res.json(req.user);
+const { id, name, email, isVerified } = req.user; 
+const userData = { id, name, email, isVerified };
+
+
+
+res.json(userData);
 };
 
 exports.updateProfile = async (req, res) => {

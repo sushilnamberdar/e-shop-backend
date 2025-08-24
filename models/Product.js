@@ -4,7 +4,11 @@ const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   price: { type: Number, required: true },
   description: { type: String },
-  image: { type: String },
+  images: [
+    {
+      type: String, // store image URL or path
+      required: true
+    }],
   category: { type: String },
   countInStock: { type: Number, default: 0 },
   reviews: [

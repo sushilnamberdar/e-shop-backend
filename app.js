@@ -14,6 +14,8 @@ const featuredProductRoutes = require('./routes/featuredProductRoutes');
 const cookieParser = require('cookie-parser');
 const { handleWebhook } = require('./controllers/paymentController');
 const searchRoutes = require('./routes/searchRoutes');
+const reviews = require('./models/reviews');
+const reviewRoutes = require('./routes/reviewRoutes')
 
 // Raw body parser for Stripe webhooks
 const rawBodyParser = (req, res, next) => {
@@ -53,7 +55,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(rawBodyParser);
-app.use(express.json());
+app.use(express.json({limit:'50mb'}));
 
 // Stripe webhook route - must be before other routes to use raw body
 app.post('/api/payments/webhook', handleWebhook);
@@ -64,6 +66,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api',reviewRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
