@@ -44,8 +44,10 @@ const allowedOrigins = [
 // CORS configuration
 const corsOptions = {
   origin(origin, cb) {
-    if (!origin) return cb(null, true);
-    cb(null, allowedOrigins.includes(origin));
+    if (!origin) return cb(null, true); // allow server-to-server or curl
+    if (allowedOrigins.includes(origin)) {
+      cb(null, origin);
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
@@ -55,7 +57,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(rawBodyParser);
-app.use(express.json({limit:'50mb'}));
+app.use(express.json({ limit: '50mb' }));
 
 // Stripe webhook route - must be before other routes to use raw body
 app.post('/api/payments/webhook', handleWebhook);
@@ -66,7 +68,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api',reviewRoutes);
+app.use('/api', reviewRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
