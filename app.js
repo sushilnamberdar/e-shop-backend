@@ -44,7 +44,7 @@ const allowedOrigins = [
 // CORS configuration
 const corsOptions = {
   origin(origin, cb) {
-    if (!origin) return cb(null, true); // allow non-browser tools
+    if (!origin) return cb(null, true);
     cb(null, allowedOrigins.includes(origin));
   },
   credentials: true,
